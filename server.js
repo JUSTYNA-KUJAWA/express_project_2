@@ -1,9 +1,24 @@
 const express = require('express');
+
 const path = require('path');
+
 const hbs = require('express-handlebars');
-const app = express();
+
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
+
+const storage = multer.diskStorage({
+  filename: function (req, file, cb) {
+    console.log('filename')
+    cb(null, file.originalname)
+  },
+  destination: function (req, file, cb) {
+    console.log('storage')
+    cb(null, 'uploads/')
+  },
+})
+const upload = multer({ storage })
+
+const app = express();
 
 /* Initial config */
 
@@ -18,6 +33,9 @@ app.use(express.json());
 /* Post requests */
 
 app.post('/contact/send-message', upload.single('projectFile'), (req, res) => {
+  
+ 
+  
   const { author, sender, title, message } = req.body;
 
   if (author && sender && title && message && req.file) {
